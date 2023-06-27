@@ -25,12 +25,23 @@ function navLoginClick(evt) {
 
 $navLogin.on("click", navLoginClick);
 
+/** show create new story form on click on "add Story" */
+function navNewStoryClick() {
+  console.log("clickeds")
+  $newStoryForm.show()
+}
+
+$navStory.on("click", navNewStoryClick)
+
+
 /** When a user first logins in, update the navbar to reflect that. */
 
 function updateNavOnLogin() {
   console.debug("updateNavOnLogin");
   $(".main-nav-links").show();
+  $navStory.show()
   $navLogin.hide();
   $navLogOut.show();
+
   $navUserProfile.text(`${currentUser.username}`).show();
 }

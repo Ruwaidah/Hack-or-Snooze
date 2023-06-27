@@ -9,8 +9,10 @@ const $allStoriesList = $("#all-stories-list");
 
 const $loginForm = $("#login-form");
 const $signupForm = $("#signup-form");
+const $newStoryForm = $("#new-story-form")
 
 const $navLogin = $("#nav-login");
+const $navStory = $("#nav-story")
 const $navUserProfile = $("#nav-user-profile");
 const $navLogOut = $("#nav-logout");
 
@@ -48,3 +50,4 @@ console.warn("HEY STUDENT: This program sends many debug messages to" +
   " seeing those helpful debug messages. In your browser console, click on" +
   " menu 'Default Levels' and add Verbose");
 $(start);
+
