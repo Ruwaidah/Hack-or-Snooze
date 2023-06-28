@@ -50,7 +50,26 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-
-
 /** add new story  */
 
+async function addNewStory() {
+  const token = localStorage.getItem("token");
+  const title = $("#story-title").val();
+  const author = $("#story-author").val();
+  const url = $("#story-url").val();
+  const story = {
+    author,
+    title,
+    url,
+  };
+  await StoryList.addStory(token, story);
+  getAndShowStoriesOnStart();
+  $("#story-title").val("");
+  $("#story-author").val("");
+  $("#story-url").val("");
+  $newStoryForm.hide();
+}
+
+$newStoryForm.on("submit", addNewStory);
+
+$("#new-story-cancel").on("click", () => $newStoryForm.hide());
