@@ -83,6 +83,7 @@ class StoryList {
       return new Story({ ...response.data.story });
     } catch (err) {
       console.log(err.message);
+      return false;
     }
   }
 }
@@ -208,7 +209,10 @@ class User {
         method: "DELETE",
         params: { token: currentUser.loginToken },
       });
-      currentUser.favorites = response.data.user.favorites;
+      currentUser = new User(
+        { ...response.data.user },
+        localStorage.getItem("token")
+      );
       return false;
     } else {
       const response = await axios({
@@ -216,7 +220,10 @@ class User {
         method: "POST",
         params: { token: currentUser.loginToken },
       });
-      currentUser.favorites = response.data.user.favorites;
+      currentUser = new User(
+        { ...response.data.user },
+        localStorage.getItem("token")
+      );
       return true;
     }
   }

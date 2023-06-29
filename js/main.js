@@ -13,7 +13,7 @@ const $newStoryForm = $("#new-story-form")
 
 const $navLogin = $("#nav-login");
 const $addStory = $("#nav-story");
-const $favStory = $("#nav-fav-story");
+const $navFavStory = $("#nav-fav-story");
 const $navUserProfile = $("#nav-user-profile");
 const $navLogOut = $("#nav-logout");
 

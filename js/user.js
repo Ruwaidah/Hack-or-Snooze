@@ -22,7 +22,9 @@ async function login(evt) {
   currentUser = await User.login(username, password);
 
   $loginForm.trigger("reset");
-
+  if (currentUser) {
+    getAndShowStoriesOnStart();
+  }
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
 }
@@ -114,4 +116,3 @@ function updateUIOnUserLogin() {
 
   updateNavOnLogin();
 }
-
