@@ -24,7 +24,9 @@ class Story {
 
   getHostName() {
     // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    const url = this.url;
+    const hostname = $("<a>").prop("href", url).prop("hostname");
+    return hostname;
   }
 }
 
@@ -193,6 +195,29 @@ class User {
     } catch (err) {
       console.error("loginViaStoredCredentials failed", err);
       return null;
+    }
+  }
+
+  static async favoritesStory(storyId) {
+    const favStory = currentUser.favorites.find(
+      (element) => element.storyId === storyId
+    );
+    if (favStory) {
+      const response = await axios({
+        url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
+        method: "DELETE",
+        params: { token: currentUser.loginToken },
+      });
+      currentUser.favorites = response.data.user.favorites;
+      return false;
+    } else {
+      const response = await axios({
+        url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
+        method: "POST",
+        params: { token: currentUser.loginToken },
+      });
+      currentUser.favorites = response.data.user.favorites;
+      return true;
     }
   }
 }

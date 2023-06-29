@@ -20,10 +20,13 @@ async function getAndShowStoriesOnStart() {
 
 function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
-
   const hostName = story.getHostName();
+  const favStory = currentUser.favorites.find(
+    (element) => element.storyId === story.storyId
+  );
   return $(`
       <li id="${story.storyId}">
+      <i class="${favStory ? "fa-solid" : "fa-regular"} fa-star" ></i>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -70,6 +73,12 @@ async function addNewStory() {
   $newStoryForm.hide();
 }
 
+async function favUnfavStory(evt) {
+  const data = await User.favoritesStory($(evt.target).parent().prop("id"));
+  data? $(evt.target).removeClass("fa-regular").addClass("fa-solid") :  $(evt.target).removeClass("fa-solid").addClass("fa-regular")
+}
+
 $newStoryForm.on("submit", addNewStory);
 
 $("#new-story-cancel").on("click", () => $newStoryForm.hide());
+$allStoriesList.on("click", "i", favUnfavStory);

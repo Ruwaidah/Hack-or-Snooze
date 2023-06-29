@@ -37,3 +37,8 @@
 .story-user {
   display: block;
 }
+
+
+li i {
+  width: 100px;
+}

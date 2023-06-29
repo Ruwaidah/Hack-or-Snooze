@@ -31,7 +31,7 @@ function navNewStoryClick() {
   $newStoryForm.show()
 }
 
-$navStory.on("click", navNewStoryClick)
+$addStory.on("click", navNewStoryClick)
 
 
 /** When a user first logins in, update the navbar to reflect that. */
@@ -39,7 +39,8 @@ $navStory.on("click", navNewStoryClick)
 function updateNavOnLogin() {
   console.debug("updateNavOnLogin");
   $(".main-nav-links").show();
-  $navStory.show()
+  $addStory.show()
+  $favStory.show()
   $navLogin.hide();
   $navLogOut.show();
 
