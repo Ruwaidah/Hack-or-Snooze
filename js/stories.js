@@ -21,20 +21,29 @@ async function getAndShowStoriesOnStart() {
 function generateStoryMarkup(story) {
   const hostName = story.getHostName();
   let favStory;
+  let myStory;
   if (currentUser) {
     favStory = currentUser.favorites.find(
       (element) => element.storyId === story.storyId
     );
+    myStory = currentUser.ownStories.find(
+      (mystory) => story.storyId === mystory.storyId
+    );
   }
   return $(`
       <li id="${story.storyId}">
-      <i class="${favStory ? "fa-solid" : "fa-regular"} fa-star" ></i>
+      <i class="${favStory ? "fa-solid" : "fa-regular"} start fa-star" ></i>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
         <small class="story-hostname">(${hostName})</small>
         <small class="story-author">by ${story.author}</small>
         <small class="story-user">posted by ${story.username}</small>
+       ${
+         myStory
+           ? '<i class="fa-solid fa-trash trash" style="color: #de0d0d;"></i>'
+           : ""
+       } 
       </li>
     `);
 }
@@ -70,6 +79,7 @@ async function addNewStory() {
   const data = await StoryList.addStory(token, story);
   // getAndShowStoriesOnStart();
   if (data) {
+    await checkForRememberedUser();
     const story = generateStoryMarkup(data);
     $allStoriesList.prepend(story);
   }
@@ -81,13 +91,23 @@ async function addNewStory() {
 $newStoryForm.on("submit", addNewStory);
 $("#new-story-cancel").on("click", () => $newStoryForm.hide());
 
-
+/** add remove favorite story */
 async function favUnfavStory(evt) {
   const data = await User.favoritesStory($(evt.target).parent().prop("id"));
+  checkForRememberedUser();
   data
     ? $(evt.target).removeClass("fa-regular").addClass("fa-solid")
     : $(evt.target).removeClass("fa-solid").addClass("fa-regular");
 }
 
+$allStoriesList.on("click", "i.start", favUnfavStory);
 
-$allStoriesList.on("click", "i", favUnfavStory);
+/** delete story */
+async function deleteStory(evt) {
+  console.log("click");
+  const data = await User.deleteStory($(evt.target).parent().prop("id"));
+  await checkForRememberedUser();
+  getAndShowStoriesOnStart();
+}
+
+$allStoriesList.on("click", "i.trash", deleteStory);

@@ -82,7 +82,6 @@ class StoryList {
       });
       return new Story({ ...response.data.story });
     } catch (err) {
-      console.log(err.message);
       return false;
     }
   }
@@ -204,27 +203,32 @@ class User {
       (element) => element.storyId === storyId
     );
     if (favStory) {
-      const response = await axios({
+      await axios({
         url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
         method: "DELETE",
         params: { token: currentUser.loginToken },
       });
-      currentUser = new User(
-        { ...response.data.user },
-        localStorage.getItem("token")
-      );
       return false;
     } else {
-      const response = await axios({
+      await axios({
         url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
         method: "POST",
         params: { token: currentUser.loginToken },
       });
-      currentUser = new User(
-        { ...response.data.user },
-        localStorage.getItem("token")
-      );
       return true;
+    }
+  }
+
+  /** deleteing Story */
+  static async deleteStory(storyId) {
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/stories/${storyId}`,
+        method: "DELETE",
+        params: { token: currentUser.loginToken },
+      });
+    } catch (error) {
+      console.log(error);
     }
   }
 }

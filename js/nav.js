@@ -10,7 +10,7 @@ function navAllStories(evt) {
   console.debug("navAllStories", evt);
   hidePageComponents();
   // putStoriesOnPage();
-  getAndShowStoriesOnStart()
+  getAndShowStoriesOnStart();
 }
 
 $body.on("click", "#nav-all", navAllStories);
@@ -36,11 +36,19 @@ $addStory.on("click", navNewStoryClick);
 
 /** Show favorites stories on click favorites */
 function showFavoritesStoriesList() {
-  storyList = {stories:currentUser.favorites};
+  storyList = { stories: currentUser.favorites };
   putStoriesOnPage();
 }
 
 $navFavStory.on("click", showFavoritesStoriesList);
+
+/** my stories nav  */
+function showMyStories() {
+  storyList = { stories: currentUser.ownStories };
+  putStoriesOnPage();
+}
+
+$navMyStories.on("click", showMyStories);
 
 /** When a user first logins in, update the navbar to reflect that. */
 
@@ -49,6 +57,7 @@ function updateNavOnLogin() {
   $(".main-nav-links").show();
   $addStory.show();
   $navFavStory.show();
+  $navMyStories.show();
   $navLogin.hide();
   $loginForm.hide();
   $signupForm.hide();
