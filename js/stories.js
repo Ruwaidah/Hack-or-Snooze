@@ -22,6 +22,7 @@ function generateStoryMarkup(story) {
   const hostName = story.getHostName();
   let favStory;
   let myStory;
+  let showFavStar;
   if (currentUser) {
     favStory = currentUser.favorites.find(
       (element) => element.storyId === story.storyId
@@ -30,20 +31,29 @@ function generateStoryMarkup(story) {
       (mystory) => story.storyId === mystory.storyId
     );
   }
+  if (localStorage.getItem("token"))
+    showFavStar = `<i class="${
+      favStory ? "fa-solid" : "fa-regular"
+    } star fa-star"></i>`;
   return $(`
       <li id="${story.storyId}">
-      <i class="${favStory ? "fa-solid" : "fa-regular"} start fa-star" ></i>
-        <a href="${story.url}" target="a_blank" class="story-link">
-          ${story.title}
-        </a>
-        <small class="story-hostname">(${hostName})</small>
-        <small class="story-author">by ${story.author}</small>
-        <small class="story-user">posted by ${story.username}</small>
-       ${
-         myStory
-           ? '<i class="fa-solid fa-trash trash" style="color: #de0d0d;"></i>'
-           : ""
-       } 
+        <div>
+          ${showFavStar? showFavStar : ""}
+          <a href="${story.url}" target="a_blank" class="story-link">
+            ${story.title}
+          </a>
+          <small class="story-hostname">(${hostName})</small>
+        </div>
+        <div class="auth-postby-trash">
+          <div class="${showFavStar? "author-username-div" : ""}">
+            <small class="story-author">by ${story.author}</small>
+            <small class="story-user">posted by ${story.username}</small>
+          </div> ${
+            myStory
+              ? '<i class="fa-solid fa-trash trash" style="color: #de0d0d;"></i>'
+              : ""
+          } 
+       </div>
       </li>
     `);
 }
@@ -54,11 +64,14 @@ function putStoriesOnPage() {
   console.debug("putStoriesOnPage");
 
   $allStoriesList.empty();
-
   // loop through all of our stories and generate HTML for them
-  for (let story of storyList.stories) {
-    const $story = generateStoryMarkup(story);
-    $allStoriesList.append($story);
+  if (storyList.stories.length === 0)
+    $allStoriesList.append("<p>No Stories to Show</p>");
+  else {
+    for (let story of storyList.stories) {
+      const $story = generateStoryMarkup(story);
+      $allStoriesList.append($story);
+    }
   }
 
   $allStoriesList.show();
@@ -77,11 +90,10 @@ async function addNewStory() {
     url,
   };
   const data = await StoryList.addStory(token, story);
-  // getAndShowStoriesOnStart();
   if (data) {
     await checkForRememberedUser();
-    const story = generateStoryMarkup(data);
-    $allStoriesList.prepend(story);
+    $("#all-stories-list p").remove();
+    getAndShowStoriesOnStart();
   }
   $("#story-title").val("");
   $("#story-author").val("");
@@ -89,25 +101,35 @@ async function addNewStory() {
   $newStoryForm.hide();
 }
 $newStoryForm.on("submit", addNewStory);
-$("#new-story-cancel").on("click", () => $newStoryForm.hide());
+$("#new-story-cancel").on("click", () => {
+  $newStoryForm.hide();
+  getAndShowStoriesOnStart();
+});
 
 /** add remove favorite story */
 async function favUnfavStory(evt) {
-  const data = await User.favoritesStory($(evt.target).parent().prop("id"));
-  checkForRememberedUser();
+  console.log("click");
+  const data = await User.favoritesStory(
+    $(evt.target).parent().parent().prop("id")
+  );
+  await checkForRememberedUser();
   data
     ? $(evt.target).removeClass("fa-regular").addClass("fa-solid")
     : $(evt.target).removeClass("fa-solid").addClass("fa-regular");
 }
 
-$allStoriesList.on("click", "i.start", favUnfavStory);
+$allStoriesList.on("click", "i.star", favUnfavStory);
 
 /** delete story */
 async function deleteStory(evt) {
   console.log("click");
-  const data = await User.deleteStory($(evt.target).parent().prop("id"));
+  await User.deleteStory($(evt.target).parent().parent().prop("id"));
   await checkForRememberedUser();
-  getAndShowStoriesOnStart();
+  // getAndShowStoriesOnStart();
+  storyList.stories = storyList.stories.filter(
+    (story) => story.storyId !== $(evt.target).parent().parent().prop("id")
+  );
+  putStoriesOnPage();
 }
 
 $allStoriesList.on("click", "i.trash", deleteStory);

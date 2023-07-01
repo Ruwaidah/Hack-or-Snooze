@@ -1,23 +1,53 @@
 /* Navigation bar */
-
+body {
+  font-family: "Oleo Script", cursive;
+  font-family: "Overlock", cursive;
+}
 nav {
   display: flex;
-  background-color: #ff6600;
+  /* background-color: #ff6600; */
+  background-color: #ef6537;
+  height: 10vh;
   align-items: center;
   padding: 5px 20px;
   border-radius: 3px 3px 0 0;
+
+}
+
+nav .hidden {
+  border-left: black solid 2px;
+  padding-left: 10px;
+}
+
+#nav-login {
+  font-weight: bold;
 }
 
 .navbar-brand {
   font-weight: bold;
+  display: flex;
+}
+
+.navbar-brand a {
+  font-size: 1.4rem;
+  outline: none;
 }
 
 .nav-link {
-  font-size: 0.85rem;
+  /* font-size: 0.85rem; */
+  font-size: 1.1rem;
   margin: 0 3px;
 }
 
 .nav-right {
   margin-left: auto;
   text-align: right;
+}
+
+#nav-logout {
+  font-size: 1.2rem;
+}
+
+a:hover {
+  text-decoration: none;
 }

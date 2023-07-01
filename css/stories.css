@@ -6,8 +6,11 @@
 
 .stories-list > li {
   color: gray;
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin: 10px 0;
+  height: 80px;
+  border-bottom: 1px solid gray;
+  line-height: 1.4em;
 }
 
 #stories-loading-msg {
@@ -16,14 +19,12 @@
   margin: 20px 30px;
 }
 
-
 /* Individual stories */
 
 .story-link {
   color: black;
-  font-size: 0.85rem;
-  font-weight: normal;
-  margin: 18px 0;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .story-link:hover {
@@ -31,14 +32,34 @@
 }
 
 .story-author {
-  margin-left: 2em;
+  /* margin-left: 2em; */
+  color: green;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.author-username-div {
+  margin-left: 30px;
+
 }
 
 .story-user {
   display: block;
+  color: #f4a23a;
+  font-weight: bold;
+}
+
+li i {
+  width: 30px;
 }
 
 
-li i {
-  width: 100px;
+.auth-postby-trash {
+  display: flex;
+}
+
+.auth-postby-trash i {
+  margin-left: auto;
+  cursor: pointer;
+  
 }

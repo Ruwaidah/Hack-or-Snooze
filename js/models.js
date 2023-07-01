@@ -202,6 +202,7 @@ class User {
     const favStory = currentUser.favorites.find(
       (element) => element.storyId === storyId
     );
+    console.log(storyId, currentUser)
     if (favStory) {
       await axios({
         url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,

@@ -7,6 +7,7 @@
 /** Show main list of all stories when click site name */
 
 function navAllStories(evt) {
+  $newStoryForm.hide()
   console.debug("navAllStories", evt);
   hidePageComponents();
   // putStoriesOnPage();
@@ -29,6 +30,7 @@ $navLogin.on("click", navLoginClick);
 /** show create new story form on click on "add Story" */
 function navNewStoryClick() {
   console.log("clickeds");
+  $allStoriesList.empty()
   $newStoryForm.show();
 }
 
@@ -36,6 +38,7 @@ $addStory.on("click", navNewStoryClick);
 
 /** Show favorites stories on click favorites */
 function showFavoritesStoriesList() {
+  $newStoryForm.hide()
   storyList = { stories: currentUser.favorites };
   putStoriesOnPage();
 }
@@ -44,6 +47,7 @@ $navFavStory.on("click", showFavoritesStoriesList);
 
 /** my stories nav  */
 function showMyStories() {
+  $newStoryForm.hide()
   storyList = { stories: currentUser.ownStories };
   putStoriesOnPage();
 }

@@ -24,6 +24,12 @@
       integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oleo+Script&family=Overlock&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/site.css" />
     <link rel="stylesheet" href="css/user.css" />
     <link rel="stylesheet" href="css/stories.css" />
@@ -36,10 +42,12 @@
       <div class="navbar-brand">
         <a class="nav-link" href="#" id="nav-all">Hack or Snooze</a>
       </div>
-      <div class="nav-right">
+      <div class="nav-left">
         <a class="nav-link hidden" id="nav-story" href="#">submit</a>
         <a class="nav-link hidden" id="nav-fav-story" href="#">favorites</a>
-        <a class="nav-link-hidden" id="nav-mystories" href="#">my stories</a>
+        <a class="nav-link hidden" id="nav-mystories" href="#">my stories</a>
+      </div>
+      <div class="nav-right">
         <a class="nav-link" href="#" id="nav-login">login/signup</a>
         <a class="nav-link" href="#" id="nav-user-profile"></a>
         <a class="hidden" id="nav-logout" href="#"><small>(logout)</small></a>
@@ -107,6 +115,8 @@
         </div>
         <button type="submit">create account</button>
       </form>
+
+      <!-- Create new story form -->
       <form action="#" id="new-story-form" class="account-form hidden">
         <h4>Create New Story</h4>
         <div class="add-story">
@@ -126,6 +136,7 @@
           <input id="submit" type="submit" />
         </div>
         <div class="add-story">
+          <label for="new-story-cancel"></label>
           <button id="new-story-cancel">Cancel</button>
         </div>
       </form>
