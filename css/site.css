@@ -106,16 +106,20 @@ form > hr {
   width: 70px;
 }
 
-#new-story-form {
+#new-story-form,
+#edit-story-form {
   padding-bottom: 50px;
 }
 
 #new-story-form div,
-#new-story-form h4 {
+#new-story-form h4,
+#edit-story-form div,
+#edit-story-form h4 {
   margin: 10px auto;
 }
 
-#new-story-cancel {
+#new-story-cancel, #edit-story-cancel {
+  /* display: flex; */
   font-size: 0.8rem;
   border: none;
   border-radius: 2px;
@@ -124,7 +128,12 @@ form > hr {
   height: 40px;
   box-shadow: 0 0 3px 1px lightgray;
   box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  /* margin-left: 60px; */
 }
+
 
 /* responsive queries for tightening things up for mobile. */
 

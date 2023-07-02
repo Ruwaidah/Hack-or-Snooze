@@ -12,7 +12,7 @@ let currentUser;
 async function login(evt) {
   console.debug("login", evt);
   evt.preventDefault();
-
+  $("#signup-form p").text("")
   // grab the username and password
   const username = $("#login-username").val();
   const password = $("#login-password").val();
@@ -24,9 +24,10 @@ async function login(evt) {
   $loginForm.trigger("reset");
   if (currentUser) {
     getAndShowStoriesOnStart();
+    saveUserCredentialsInLocalStorage();
+    updateUIOnUserLogin();
   }
-  saveUserCredentialsInLocalStorage();
-  updateUIOnUserLogin();
+
 }
 
 $loginForm.on("submit", login);
@@ -36,7 +37,7 @@ $loginForm.on("submit", login);
 async function signup(evt) {
   console.debug("signup", evt);
   evt.preventDefault();
-
+  $("#login-form p").text("")
   const name = $("#signup-name").val();
   const username = $("#signup-username").val();
   const password = $("#signup-password").val();
@@ -44,11 +45,12 @@ async function signup(evt) {
   // User.signup retrieves user info from API and returns User instance
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.signup(username, password, name);
+  if (currentUser) {
+    saveUserCredentialsInLocalStorage();
+    updateUIOnUserLogin();
 
-  saveUserCredentialsInLocalStorage();
-  updateUIOnUserLogin();
-
-  $signupForm.trigger("reset");
+    $signupForm.trigger("reset");
+  }
 }
 
 $signupForm.on("submit", signup);

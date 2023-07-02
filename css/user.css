@@ -8,3 +8,15 @@
 .account-forms-container {
   padding-left: 20px;
 }
+
+.error-msg {
+  color: red;
+  height: 20px;
+  margin: 0 ;
+  margin-left: 80px;
+}
+
+
+#new-story-form .error-msg {
+  margin-left: 256px;
+}
