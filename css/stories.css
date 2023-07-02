@@ -53,13 +53,25 @@ li i {
   width: 30px;
 }
 
+.edit-delete-story-div {
+  /* margin-left: auto; */
+  margin-left: auto;
+
+}
 
 .auth-postby-trash {
   display: flex;
 }
 
+.edit-story {
+  border: none;
+  background-color: transparent;
+  color: green;
+}
+
 .auth-postby-trash i {
-  margin-left: auto;
+  /* margin-left: auto; */
   cursor: pointer;
+  margin: 0 20px;
   
 }

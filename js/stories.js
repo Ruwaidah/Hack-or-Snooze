@@ -38,19 +38,19 @@ function generateStoryMarkup(story) {
   return $(`
       <li id="${story.storyId}">
         <div>
-          ${showFavStar? showFavStar : ""}
+          ${showFavStar ? showFavStar : ""}
           <a href="${story.url}" target="a_blank" class="story-link">
             ${story.title}
           </a>
           <small class="story-hostname">(${hostName})</small>
         </div>
         <div class="auth-postby-trash">
-          <div class="${showFavStar? "author-username-div" : ""}">
+          <div class="${showFavStar ? "author-username-div" : ""}">
             <small class="story-author">by ${story.author}</small>
             <small class="story-user">posted by ${story.username}</small>
           </div> ${
             myStory
-              ? '<i class="fa-solid fa-trash trash" style="color: #de0d0d;"></i>'
+              ? '<div class="edit-delete-story-div"><button class="edit-story">Edit</button> <i class="fa-solid fa-trash trash" style="color: #de0d0d;"></i></div>'
               : ""
           } 
        </div>
@@ -90,29 +90,28 @@ async function addNewStory() {
     url,
   };
   const data = await StoryList.addStory(token, story);
+
   if (data) {
-    await checkForRememberedUser();
-    $("#all-stories-list p").remove();
-    getAndShowStoriesOnStart();
+    putStoriesOnPage();
+    $("#story-title").val("");
+    $("#story-author").val("");
+    $("#story-url").val("");
+    $newStoryForm.hide();
   }
-  $("#story-title").val("");
-  $("#story-author").val("");
-  $("#story-url").val("");
-  $newStoryForm.hide();
 }
+
 $newStoryForm.on("submit", addNewStory);
 $("#new-story-cancel").on("click", () => {
   $newStoryForm.hide();
-  getAndShowStoriesOnStart();
+  putStoriesOnPage();
 });
 
 /** add remove favorite story */
 async function favUnfavStory(evt) {
   console.log("click");
   const data = await User.favoritesStory(
-    $(evt.target).parent().parent().prop("id")
+    $(evt.target).closest("li").prop("id")
   );
-  await checkForRememberedUser();
   data
     ? $(evt.target).removeClass("fa-regular").addClass("fa-solid")
     : $(evt.target).removeClass("fa-solid").addClass("fa-regular");
@@ -123,13 +122,62 @@ $allStoriesList.on("click", "i.star", favUnfavStory);
 /** delete story */
 async function deleteStory(evt) {
   console.log("click");
-  await User.deleteStory($(evt.target).parent().parent().prop("id"));
-  await checkForRememberedUser();
-  // getAndShowStoriesOnStart();
-  storyList.stories = storyList.stories.filter(
-    (story) => story.storyId !== $(evt.target).parent().parent().prop("id")
-  );
-  putStoriesOnPage();
+  const storyId = $(evt.target).closest("li").prop("id");
+  const deleted = await StoryList.deleteStory(storyId);
+  if (deleted) {
+    await checkForRememberedUser();
+    storyList.stories = storyList.stories.filter(
+      (story) => story.storyId !== storyId
+    );
+    putStoriesOnPage();
+  } else {
+  }
 }
 
 $allStoriesList.on("click", "i.trash", deleteStory);
+
+/** edit Story */
+let theStoryValues;
+async function editStory(evt) {
+  const storyId = $(evt.target).closest("li").prop("id");
+  console.log(storyId);
+  theStoryValues = storyList.stories.find((story) => story.storyId === storyId);
+  $allStoriesList.empty();
+  $editStoryForm.show();
+  console.log();
+  $("#edit-story-title").val(theStoryValues.title);
+  $("#edit-story-author").val(theStoryValues.author);
+  $("#edit-story-url").val(theStoryValues.url);
+}
+
+$editStoryForm.on("submit", editMyStoryInfo);
+
+$("#edit-story-cancel").on("click", () => {
+  $editStoryForm.hide();
+  putStoriesOnPage();
+});
+
+$allStoriesList.on("click", ".edit-delete-story-div button", editStory);
+
+async function editMyStoryInfo() {
+  const token = localStorage.getItem("token");
+  const title = $("#edit-story-title").val();
+  const author = $("#edit-story-author").val();
+  const url = $("#edit-story-url").val();
+  const editstory = {
+    storyId: theStoryValues.storyId,
+    author,
+    title,
+    url,
+  };
+  const data = await StoryList.editMyStory(token, editstory);
+
+  if (data) {
+    await checkForRememberedUser();
+    getAndShowStoriesOnStart();
+    $("#story-title").val("");
+    $("#story-author").val("");
+    $("#story-url").val("");
+    $editStoryForm.hide();
+  }
+}

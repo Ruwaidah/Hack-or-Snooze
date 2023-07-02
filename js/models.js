@@ -74,15 +74,52 @@ class StoryList {
 
   static async addStory(user, newStory) {
     // UNIMPLEMENTED: complete this function!
+    console.log("new");
     try {
       const response = await axios({
         url: `${BASE_URL}/stories`,
         method: "POST",
         data: { token: user, story: newStory },
       });
+      storyList.stories.unshift(new Story({ ...response.data.story }));
+      currentUser.ownStories.unshift(new Story({ ...response.data.story }));
       return new Story({ ...response.data.story });
     } catch (err) {
+      console.log(err);
+      $("#new-story-form .error-msg").text(err.message);
+      // return false;
+    }
+  }
+
+  /** deleteing Story */
+  static async deleteStory(storyId) {
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/stories/${storyId}`,
+        method: "DELETE",
+        params: { token: currentUser.loginToken },
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
       return false;
+    }
+  }
+
+  /** edit my story */
+  static async editMyStory(token, story) {
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/stories/${story.storyId}`,
+        method: "PATCH",
+        data: {
+          token,
+          story: { author: story.author, title: story.title, url: story.url },
+        },
+      });
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
     }
   }
 }
@@ -121,24 +158,28 @@ class User {
    */
 
   static async signup(username, password, name) {
-    const response = await axios({
-      url: `${BASE_URL}/signup`,
-      method: "POST",
-      data: { user: { username, password, name } },
-    });
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/signup`,
+        method: "POST",
+        data: { user: { username, password, name } },
+      });
 
-    let { user } = response.data;
+      let { user } = response.data;
 
-    return new User(
-      {
-        username: user.username,
-        name: user.name,
-        createdAt: user.createdAt,
-        favorites: user.favorites,
-        ownStories: user.stories,
-      },
-      response.data.token
-    );
+      return new User(
+        {
+          username: user.username,
+          name: user.name,
+          createdAt: user.createdAt,
+          favorites: user.favorites,
+          ownStories: user.stories,
+        },
+        response.data.token
+      );
+    } catch (error) {
+      $("#signup-form p").text(error.message);
+    }
   }
 
   /** Login in user with API, make User instance & return it.
@@ -148,24 +189,28 @@ class User {
    */
 
   static async login(username, password) {
-    const response = await axios({
-      url: `${BASE_URL}/login`,
-      method: "POST",
-      data: { user: { username, password } },
-    });
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/login`,
+        method: "POST",
+        data: { user: { username, password } },
+      });
 
-    let { user } = response.data;
+      let { user } = response.data;
 
-    return new User(
-      {
-        username: user.username,
-        name: user.name,
-        createdAt: user.createdAt,
-        favorites: user.favorites,
-        ownStories: user.stories,
-      },
-      response.data.token
-    );
+      return new User(
+        {
+          username: user.username,
+          name: user.name,
+          createdAt: user.createdAt,
+          favorites: user.favorites,
+          ownStories: user.stories,
+        },
+        response.data.token
+      );
+    } catch (error) {
+      $("#login-form p").text(error.message);
+    }
   }
 
   /** When we already have credentials (token & username) for a user,
@@ -173,6 +218,7 @@ class User {
    */
 
   static async loginViaStoredCredentials(token, username) {
+    console.log("login");
     try {
       const response = await axios({
         url: `${BASE_URL}/users/${username}`,
@@ -199,37 +245,30 @@ class User {
   }
 
   static async favoritesStory(storyId) {
+    console.log(currentUser)
     const favStory = currentUser.favorites.find(
       (element) => element.storyId === storyId
     );
-    console.log(storyId, currentUser)
+    console.log(storyId, favStory)
     if (favStory) {
       await axios({
         url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
         method: "DELETE",
         params: { token: currentUser.loginToken },
       });
+      currentUser.favorites = currentUser.favorites.filter(
+        (story) => { if (story.storyId !== storyId) return new Story(story)}
+      );
+      console.log(currentUser)
       return false;
     } else {
-      await axios({
+      const response = await axios({
         url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
         method: "POST",
         params: { token: currentUser.loginToken },
       });
+      currentUser.favorites = response.data.user.favorites.map(story => new Story(story));
       return true;
-    }
-  }
-
-  /** deleteing Story */
-  static async deleteStory(storyId) {
-    try {
-      const response = await axios({
-        url: `${BASE_URL}/stories/${storyId}`,
-        method: "DELETE",
-        params: { token: currentUser.loginToken },
-      });
-    } catch (error) {
-      console.log(error);
     }
   }
 }
