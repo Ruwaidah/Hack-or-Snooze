@@ -54,6 +54,32 @@
       </div>
     </nav>
 
+    <!-- User Profile -->
+    <form action="#" id="user-profile-form" class="account-form hidden">
+      <h4>Profile</h4>
+      <div>
+        <label for="username-profile">Username</label>
+        <input id="username-profile" disabled required />
+      </div>
+      <div>
+        <label for="name-profile">Name</label>
+        <input id="name-profile" required />
+      </div>
+      <div class="psw-input">
+        <label for="password-profile">Password</label>
+        <!-- <input id="password-profile" required /> -->
+        <button type="button" id="change-psw">Change Password</button>
+      </div>
+      <div class="user-profile-bts">
+        <label for="submit"> </label>
+        <input id="userprofile-submit" type="submit" />
+      </div>
+      <div>
+        <label for="userprofile-cancel"></label>
+        <button type="button" id="userprofile-cancel">Cancel</button>
+      </div>
+    </form>
+    <h4 id="show-profile-stories">My Stories</h4>
     <!-- area for stories (all stories, user stories, favorites) -->
     <section class="stories-container container">
       <!-- loading message (removed by JS after stories loaded) -->
@@ -165,10 +191,9 @@
         </div>
         <div class="add-story">
           <label></label>
-          <button id="edit-story-cancel" type="button"> Cancel </button>
+          <button id="edit-story-cancel" type="button">Cancel</button>
         </div>
       </form>
-   
     </section>
 
     <!-- Library JS & our JS -->

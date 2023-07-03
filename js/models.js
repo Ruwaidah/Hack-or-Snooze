@@ -74,7 +74,6 @@ class StoryList {
 
   static async addStory(user, newStory) {
     // UNIMPLEMENTED: complete this function!
-    console.log("new");
     try {
       const response = await axios({
         url: `${BASE_URL}/stories`,
@@ -85,9 +84,7 @@ class StoryList {
       currentUser.ownStories.unshift(new Story({ ...response.data.story }));
       return new Story({ ...response.data.story });
     } catch (err) {
-      console.log(err);
       $("#new-story-form .error-msg").text(err.message);
-      // return false;
     }
   }
 
@@ -101,7 +98,6 @@ class StoryList {
       });
       return response.data;
     } catch (error) {
-      console.log(error);
       return false;
     }
   }
@@ -244,22 +240,28 @@ class User {
     }
   }
 
+  static async updateUserProfile(data) {
+    await axios({
+      url: `${BASE_URL}/users/${currentUser.username}`,
+      method: "PATCH",
+      data: { token, user: data },
+    });
+  }
+
+  /** favorite unfavorite story */
   static async favoritesStory(storyId) {
-    console.log(currentUser)
     const favStory = currentUser.favorites.find(
       (element) => element.storyId === storyId
     );
-    console.log(storyId, favStory)
     if (favStory) {
       await axios({
         url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
         method: "DELETE",
         params: { token: currentUser.loginToken },
       });
-      currentUser.favorites = currentUser.favorites.filter(
-        (story) => { if (story.storyId !== storyId) return new Story(story)}
-      );
-      console.log(currentUser)
+      currentUser.favorites = currentUser.favorites.filter((story) => {
+        if (story.storyId !== storyId) return new Story(story);
+      });
       return false;
     } else {
       const response = await axios({
@@ -267,7 +269,9 @@ class User {
         method: "POST",
         params: { token: currentUser.loginToken },
       });
-      currentUser.favorites = response.data.user.favorites.map(story => new Story(story));
+      currentUser.favorites = response.data.user.favorites.map(
+        (story) => new Story(story)
+      );
       return true;
     }
   }

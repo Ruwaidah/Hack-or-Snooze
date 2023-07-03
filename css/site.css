@@ -118,8 +118,7 @@ form > hr {
   margin: 10px auto;
 }
 
-#new-story-cancel, #edit-story-cancel {
-  /* display: flex; */
+#new-story-cancel, #edit-story-cancel, #userprofile-cancel {
   font-size: 0.8rem;
   border: none;
   border-radius: 2px;
@@ -131,7 +130,31 @@ form > hr {
   justify-content: center;
   align-items: center;
   margin: 0;
-  /* margin-left: 60px; */
+}
+#user-profile-form label {
+  width: 10rem;
+}
+
+.new-password {
+  margin-bottom: 20px;
+}
+
+.new-password-error-msg {
+  border: red 1px solid;
+}
+.new-psw-not-match-msg{
+  height: 20px;
+  color: red;
+  margin: 0;
+  margin-left: 164px;
+}
+
+#show-profile-stories {
+  text-align: center;
+  font-size: 2rem;
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 1px solid black
 }
 
 

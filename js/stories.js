@@ -6,6 +6,7 @@ let storyList;
 /** Get and show stories when site first loads. */
 
 async function getAndShowStoriesOnStart() {
+  $("#show-profile-stories").hide()
   storyList = await StoryList.getStories();
   $storiesLoadingMsg.remove();
   putStoriesOnPage();
@@ -31,7 +32,7 @@ function generateStoryMarkup(story) {
       (mystory) => story.storyId === mystory.storyId
     );
   }
-  if (localStorage.getItem("token"))
+  if (token)
     showFavStar = `<i class="${
       favStory ? "fa-solid" : "fa-regular"
     } star fa-star"></i>`;
@@ -73,14 +74,12 @@ function putStoriesOnPage() {
       $allStoriesList.append($story);
     }
   }
-
   $allStoriesList.show();
 }
 
 /** add new story  */
 
 async function addNewStory() {
-  const token = localStorage.getItem("token");
   const title = $("#story-title").val();
   const author = $("#story-author").val();
   const url = $("#story-url").val();
@@ -140,11 +139,9 @@ $allStoriesList.on("click", "i.trash", deleteStory);
 let theStoryValues;
 async function editStory(evt) {
   const storyId = $(evt.target).closest("li").prop("id");
-  console.log(storyId);
   theStoryValues = storyList.stories.find((story) => story.storyId === storyId);
   $allStoriesList.empty();
   $editStoryForm.show();
-  console.log();
   $("#edit-story-title").val(theStoryValues.title);
   $("#edit-story-author").val(theStoryValues.author);
   $("#edit-story-url").val(theStoryValues.url);
@@ -160,7 +157,6 @@ $("#edit-story-cancel").on("click", () => {
 $allStoriesList.on("click", ".edit-delete-story-div button", editStory);
 
 async function editMyStoryInfo() {
-  const token = localStorage.getItem("token");
   const title = $("#edit-story-title").val();
   const author = $("#edit-story-author").val();
   const url = $("#edit-story-url").val();

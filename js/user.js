@@ -12,7 +12,7 @@ let currentUser;
 async function login(evt) {
   console.debug("login", evt);
   evt.preventDefault();
-  $("#signup-form p").text("")
+  $("#signup-form p").text("");
   // grab the username and password
   const username = $("#login-username").val();
   const password = $("#login-password").val();
@@ -27,7 +27,6 @@ async function login(evt) {
     saveUserCredentialsInLocalStorage();
     updateUIOnUserLogin();
   }
-
 }
 
 $loginForm.on("submit", login);
@@ -37,7 +36,7 @@ $loginForm.on("submit", login);
 async function signup(evt) {
   console.debug("signup", evt);
   evt.preventDefault();
-  $("#login-form p").text("")
+  $("#login-form p").text("");
   const name = $("#signup-name").val();
   const username = $("#signup-username").val();
   const password = $("#signup-password").val();
@@ -62,11 +61,75 @@ $signupForm.on("submit", signup);
 
 function logout(evt) {
   console.debug("logout", evt);
+  
   localStorage.clear();
   location.reload();
 }
 
 $navLogOut.on("click", logout);
+
+/** show User profile */
+async function editUserProfile() {
+  storyList = { stories: currentUser.ownStories };
+  putStoriesOnPage();
+  const userName = $("#username-profile");
+  const name = $("#name-profile");
+  // const data = await User.getUserProfile();
+  userName.val(currentUser.username);
+  name.val(currentUser.name);
+  // password.val(currentUser.password)
+}
+
+function addChangePswInput() {
+  $(".psw-input").hide();
+  const $newPasswordInputs = $(`<div class="new-password">
+  <p class="new-psw-not-match-msg"></p>
+    <label>New Password</label>
+    <input id="new-psw" type="password" placeholder="new password" required/>
+  </div>
+  <div class="new-password">
+    <label>Re Type New Password</label>
+    <input id="re-new-psw" type="password" placeholder="re type new password" required/>
+  </div>`);
+
+  $(".user-profile-bts").prepend($newPasswordInputs);
+}
+
+$("#change-psw").on("click", addChangePswInput);
+
+$("#userprofile-cancel").on("click", () => {
+  $userProfileForm.hide();
+  getAndShowStoriesOnStart();
+  $(".new-password").remove();
+  $("#show-profile-stories").hide()
+  $(".psw-input").show();
+  $(".new-psw-not-match-msg").text("");
+});
+
+async function updateUserSubmit() {
+  let newPsw;
+  let reNewPsw;
+  const username = $("#username-profile").val();
+  const name = $("#name-profile").val();
+  if ($("#new-psw")) {
+    newPsw = $("#new-psw").val();
+    reNewPsw = $("#re-new-psw").val();
+    if (newPsw !== reNewPsw) {
+      $(".new-password input").addClass("new-password-error-msg");
+      $(".new-psw-not-match-msg").text("Both Passwords Must Be Match");
+    } else {
+      await User.updateUserProfile({ username, name, password: newPsw });
+    }
+  } else {
+    await User.updateUserProfile({ username, name });
+  }
+  await checkForRememberedUser()
+  $("#show-profile-stories").hide()
+  $userProfileForm.hide();
+  getAndShowStoriesOnStart()
+}
+
+$userProfileForm.on("submit", updateUserSubmit);
 
 /******************************************************************************
  * Storing/recalling previously-logged-in-user with localStorage
@@ -78,7 +141,6 @@ $navLogOut.on("click", logout);
 
 async function checkForRememberedUser() {
   console.debug("checkForRememberedUser");
-  const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   if (!token || !username) return false;
 
