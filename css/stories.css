@@ -75,3 +75,7 @@ li i {
   margin: 0 20px;
   
 }
+
+i {
+  cursor: pointer;
+}
