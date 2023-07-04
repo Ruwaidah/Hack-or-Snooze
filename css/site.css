@@ -149,12 +149,12 @@ form > hr {
   margin-left: 164px;
 }
 
-#show-profile-stories {
-  text-align: center;
-  font-size: 2rem;
-  padding: 20px 0;
-  margin-top: 20px;
-  border-top: 1px solid black
+#change-psw {
+  border: none;
+  color: red;
+  background-color: transparent;
+  text-shadow: 1px 1px 10px gray;
+cursor: pointer;
 }
 
 

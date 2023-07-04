@@ -80,7 +80,7 @@ class StoryList {
         method: "POST",
         data: { token: user, story: newStory },
       });
-      storyList.stories.unshift(new Story({ ...response.data.story }));
+      // storyList.stories.unshift(new Story({ ...response.data.story }));
       currentUser.ownStories.unshift(new Story({ ...response.data.story }));
       return new Story({ ...response.data.story });
     } catch (err) {
@@ -241,6 +241,7 @@ class User {
   }
 
   static async updateUserProfile(data) {
+    const token = localStorage.getItem("token")
     await axios({
       url: `${BASE_URL}/users/${currentUser.username}`,
       method: "PATCH",

@@ -20,11 +20,10 @@ async function login(evt) {
   // User.login retrieves user info from API and returns User instance
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.login(username, password);
-
   $loginForm.trigger("reset");
   if (currentUser) {
-    getAndShowStoriesOnStart();
     saveUserCredentialsInLocalStorage();
+    getAndShowStoriesOnStart();
     updateUIOnUserLogin();
   }
 }
@@ -61,7 +60,7 @@ $signupForm.on("submit", signup);
 
 function logout(evt) {
   console.debug("logout", evt);
-  
+
   localStorage.clear();
   location.reload();
 }
@@ -70,14 +69,8 @@ $navLogOut.on("click", logout);
 
 /** show User profile */
 async function editUserProfile() {
-  storyList = { stories: currentUser.ownStories };
-  putStoriesOnPage();
-  const userName = $("#username-profile");
-  const name = $("#name-profile");
-  // const data = await User.getUserProfile();
-  userName.val(currentUser.username);
-  name.val(currentUser.name);
-  // password.val(currentUser.password)
+  $("#username-profile").val(currentUser.username);
+  $("#name-profile").val(currentUser.name);
 }
 
 function addChangePswInput() {
@@ -101,12 +94,12 @@ $("#userprofile-cancel").on("click", () => {
   $userProfileForm.hide();
   getAndShowStoriesOnStart();
   $(".new-password").remove();
-  $("#show-profile-stories").hide()
   $(".psw-input").show();
   $(".new-psw-not-match-msg").text("");
 });
 
-async function updateUserSubmit() {
+async function updateUserSubmit(evt) {
+  evt.preventDefault();
   let newPsw;
   let reNewPsw;
   const username = $("#username-profile").val();
@@ -117,16 +110,22 @@ async function updateUserSubmit() {
     if (newPsw !== reNewPsw) {
       $(".new-password input").addClass("new-password-error-msg");
       $(".new-psw-not-match-msg").text("Both Passwords Must Be Match");
+      return
     } else {
       await User.updateUserProfile({ username, name, password: newPsw });
+      await checkForRememberedUser();
+      $userProfileForm.hide();
+      getAndShowStoriesOnStart();
     }
   } else {
     await User.updateUserProfile({ username, name });
+    await checkForRememberedUser();
+    $userProfileForm.hide();
+    getAndShowStoriesOnStart();
   }
-  await checkForRememberedUser()
-  $("#show-profile-stories").hide()
-  $userProfileForm.hide();
-  getAndShowStoriesOnStart()
+  $(".new-password").remove();
+  $(".psw-input").show();
+  $(".new-psw-not-match-msg").text("");
 }
 
 $userProfileForm.on("submit", updateUserSubmit);
@@ -141,6 +140,7 @@ $userProfileForm.on("submit", updateUserSubmit);
 
 async function checkForRememberedUser() {
   console.debug("checkForRememberedUser");
+  const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   if (!token || !username) return false;
 
