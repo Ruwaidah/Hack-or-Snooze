@@ -3,7 +3,6 @@
 // So we don't have to keep re-finding things on page, find DOM elements once:
 
 const $body = $("body");
-const token = localStorage.getItem("token")
 
 const $storiesLoadingMsg = $("#stories-loading-msg");
 const $allStoriesList = $("#all-stories-list");
@@ -27,7 +26,7 @@ const $navLogOut = $("#nav-logout");
  */
 
 function hidePageComponents() {
-  const components = [$allStoriesList, $loginForm, $signupForm];
+  const components = [$allStoriesList, $loginForm, $signupForm,$editStoryForm,$userProfileForm,$newStoryForm];
   components.forEach((c) => c.hide());
 }
 

@@ -7,13 +7,9 @@
 /** Show main list of all stories when click site name */
 
 function navAllStories(evt) {
-  $(".new-password").remove();
-  $("#show-profile-stories").hide()
-  $(".psw-input").show();
-  $newStoryForm.hide();
-  $editStoryForm.hide();
-  $userProfileForm.hide();
   console.debug("navAllStories", evt);
+  $(".new-password").remove();
+  $(".psw-input").show();
   hidePageComponents();
   // putStoriesOnPage();
   getAndShowStoriesOnStart();
@@ -36,17 +32,15 @@ $navLogin.on("click", navLoginClick);
 
 /** show create new story form on click on "add Story" */
 function navNewStoryClick() {
-  $("#show-profile-stories").hide()
+  hidePageComponents()
   console.log("clickeds");
   $("#new-story-form .error-msg").text("");
   $(".new-password").remove();
   $(".psw-input").show();
-  $("#story-title").val("");
-  $("#story-author").val("");
-  $("#story-url").val("");
-  $allStoriesList.empty();
-  $userProfileForm.hide();
-  $editStoryForm.hide();
+  // $("#story-title").val("");
+  // $("#story-author").val("");
+  // $("#story-url").val("");
+  // $allStoriesList.empty();
   $newStoryForm.show();
 }
 
@@ -54,7 +48,6 @@ $addStory.on("click", navNewStoryClick);
 
 /** Show favorites stories on click favorites */
 function showFavoritesStoriesList() {
-  $("#show-profile-stories").hide()
   $(".new-password").remove();
   $(".psw-input").show();
   $userProfileForm.hide();
@@ -68,7 +61,6 @@ $navFavStory.on("click", showFavoritesStoriesList);
 
 /** my stories nav  */
 function showMyStories() {
-  $("#show-profile-stories").hide()
   $(".new-password").remove();
   $(".psw-input").show();
   $editStoryForm.hide();
@@ -82,7 +74,6 @@ $navMyStories.on("click", showMyStories);
 
 /** User Profile Nav Click */
 function userProfileClicked() {
-  $("#show-profile-stories").show()
   $userProfileForm.show();
   $newStoryForm.hide();
   $editStoryForm.hide();

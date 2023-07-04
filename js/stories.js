@@ -6,7 +6,6 @@ let storyList;
 /** Get and show stories when site first loads. */
 
 async function getAndShowStoriesOnStart() {
-  $("#show-profile-stories").hide()
   storyList = await StoryList.getStories();
   $storiesLoadingMsg.remove();
   putStoriesOnPage();
@@ -25,17 +24,18 @@ function generateStoryMarkup(story) {
   let myStory;
   let showFavStar;
   if (currentUser) {
-    favStory = currentUser.favorites.find(
-      (element) => element.storyId === story.storyId
-    );
-    myStory = currentUser.ownStories.find(
-      (mystory) => story.storyId === mystory.storyId
-    );
-  }
-  if (token)
+    // favStory = currentUser.favorites.find(
+    //   (element) => element.storyId === story.storyId
+    // );
+    favStory = findStory(currentUser.favorites, story.storyId);
+    myStory = findStory(currentUser.ownStories, story.storyId);
+    // myStory = currentUser.ownStories.find(
+    //   (mystory) => story.storyId === mystory.storyId
+    // );
     showFavStar = `<i class="${
       favStory ? "fa-solid" : "fa-regular"
     } star fa-star"></i>`;
+  }
   return $(`
       <li id="${story.storyId}">
         <div>
@@ -59,6 +59,10 @@ function generateStoryMarkup(story) {
     `);
 }
 
+function findStory(array, storyId) {
+  return array.find((mystory) => storyId === mystory.storyId);
+}
+
 /** Gets list of stories from server, generates their HTML, and puts on page. */
 
 function putStoriesOnPage() {
@@ -79,7 +83,8 @@ function putStoriesOnPage() {
 
 /** add new story  */
 
-async function addNewStory() {
+async function addNewStory(evt) {
+  evt.preventDefault();
   const title = $("#story-title").val();
   const author = $("#story-author").val();
   const url = $("#story-url").val();
@@ -88,15 +93,13 @@ async function addNewStory() {
     title,
     url,
   };
-  const data = await StoryList.addStory(token, story);
+  const data = await StoryList.addStory(currentUser.loginToken, story);
 
   if (data) {
-    putStoriesOnPage();
-    $("#story-title").val("");
-    $("#story-author").val("");
-    $("#story-url").val("");
+    getAndShowStoriesOnStart()
     $newStoryForm.hide();
   }
+  $newStoryForm.trigger("reset");
 }
 
 $newStoryForm.on("submit", addNewStory);
@@ -166,7 +169,7 @@ async function editMyStoryInfo() {
     title,
     url,
   };
-  const data = await StoryList.editMyStory(token, editstory);
+  const data = await StoryList.editMyStory(localStorage.getItem("token"), editstory);
 
   if (data) {
     await checkForRememberedUser();
