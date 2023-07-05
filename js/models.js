@@ -81,10 +81,11 @@ class StoryList {
         data: { token: user, story: newStory },
       });
       // storyList.stories.unshift(new Story({ ...response.data.story }));
+      console.log(response)
       currentUser.ownStories.unshift(new Story({ ...response.data.story }));
       return new Story({ ...response.data.story });
     } catch (err) {
-      $("#new-story-form .error-msg").text(err.message);
+      $("#new-story-form .error-msg").text(err.response.data.error.message);
     }
   }
 
@@ -115,7 +116,7 @@ class StoryList {
       });
       return response.data;
     } catch (err) {
-      console.log(err.message);
+      console.log(err.response.data.error.message);
     }
   }
 }
@@ -174,7 +175,7 @@ class User {
         response.data.token
       );
     } catch (error) {
-      $("#signup-form p").text(error.message);
+      $("#signup-form p").text(error.response.data.error.message);
     }
   }
 
@@ -205,7 +206,7 @@ class User {
         response.data.token
       );
     } catch (error) {
-      $("#login-form p").text(error.message);
+      $("#login-form p").text(error.response.data.error.message);
     }
   }
 
