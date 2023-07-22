@@ -21,12 +21,8 @@ class Story {
   }
 
   /** Parses hostname out of URL and returns it. */
-
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    const url = this.url;
-    const hostname = $("<a>").prop("href", url).prop("hostname");
-    return hostname;
+    return new URL(this.url).hostname;
   }
 }
 
@@ -39,20 +35,9 @@ class StoryList {
     this.stories = stories;
   }
 
-  /** Generate a new StoryList. It:
-   *
-   *  - calls the API
-   *  - builds an array of Story instances
-   *  - makes a single StoryList instance out of that
-   *  - returns the StoryList instance.
-   */
+  /** Generate a new StoryLis*/
 
   static async getStories() {
-    // Note presence of `static` keyword: this indicates that getStories is
-    //  **not** an instance method. Rather, it is a method that is called on the
-    //  class directly. Why doesn't it make sense for getStories to be an
-    //  instance method?
-
     // query the /stories endpoint (no auth required)
     const response = await axios({
       url: `${BASE_URL}/stories`,
@@ -65,25 +50,16 @@ class StoryList {
     return new StoryList(stories);
   }
 
-  /** Adds story data to API, makes a Story instance, adds it to story list.
-   * - user - the current instance of User who will post the story
-   * - obj of {title, author, url}
-   *
-   * Returns the new Story instance
-   */
-
-  static async addStory(user, newStory) {
-    // UNIMPLEMENTED: complete this function!
+  // Adds story data to API, makes a Story instance, adds it to story list
+  static async addStory(newStory) {
     try {
-      const response = await axios({
+      const { data } = await axios({
         url: `${BASE_URL}/stories`,
         method: "POST",
-        data: { token: user, story: newStory },
+        data: { token: currentUser.loginToken, story: newStory },
       });
-      // storyList.stories.unshift(new Story({ ...response.data.story }));
-      console.log(response)
-      currentUser.ownStories.unshift(new Story({ ...response.data.story }));
-      return new Story({ ...response.data.story });
+      currentUser.ownStories.unshift(new Story({ ...data.story }));
+      return new Story({ ...data.story });
     } catch (err) {
       $("#new-story-form .error-msg").text(err.response.data.error.message);
     }
@@ -106,7 +82,7 @@ class StoryList {
   /** edit my story */
   static async editMyStory(token, story) {
     try {
-      const response = await axios({
+      const { data } = await axios({
         url: `${BASE_URL}/stories/${story.storyId}`,
         method: "PATCH",
         data: {
@@ -114,7 +90,7 @@ class StoryList {
           story: { author: story.author, title: story.title, url: story.url },
         },
       });
-      return response.data;
+      return data;
     } catch (err) {
       console.log(err.response.data.error.message);
     }
@@ -122,15 +98,10 @@ class StoryList {
 }
 
 /******************************************************************************
- * User: a user in the system (only used to represent the current user)
+ * User: a user in the system
  */
 
 class User {
-  /** Make user instance from obj of user data and a token:
-   *   - {username, name, createdAt, favorites[], ownStories[]}
-   *   - token
-   */
-
   constructor(
     { username, name, createdAt, favorites = [], ownStories = [] },
     token
@@ -147,12 +118,7 @@ class User {
     this.loginToken = token;
   }
 
-  /** Register new user in API, make User instance & return it.
-   *
-   * - username: a new username
-   * - password: a new password
-   * - name: the user's full name
-   */
+  /** Register new user in API*/
 
   static async signup(username, password, name) {
     try {
@@ -179,11 +145,7 @@ class User {
     }
   }
 
-  /** Login in user with API, make User instance & return it.
-
-   * - username: an existing user's username
-   * - password: an existing user's password
-   */
+  /** Login in user with API  */
 
   static async login(username, password) {
     try {
@@ -210,8 +172,8 @@ class User {
     }
   }
 
-  /** When we already have credentials (token & username) for a user,
-   *   we can log them in automatically. This function does that.
+  /** already have credentials (token & username) for a user,
+   *   log them in automatically.
    */
 
   static async loginViaStoredCredentials(token, username) {
@@ -242,7 +204,7 @@ class User {
   }
 
   static async updateUserProfile(data) {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     await axios({
       url: `${BASE_URL}/users/${currentUser.username}`,
       method: "PATCH",
@@ -255,22 +217,17 @@ class User {
     const favStory = currentUser.favorites.find(
       (element) => element.storyId === storyId
     );
+    const response = await axios({
+      url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
+      method: favStory ? "DELETE" : "POST",
+      params: { token: currentUser.loginToken },
+    });
     if (favStory) {
-      await axios({
-        url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
-        method: "DELETE",
-        params: { token: currentUser.loginToken },
-      });
       currentUser.favorites = currentUser.favorites.filter((story) => {
         if (story.storyId !== storyId) return new Story(story);
       });
       return false;
     } else {
-      const response = await axios({
-        url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
-        method: "POST",
-        params: { token: currentUser.loginToken },
-      });
       currentUser.favorites = response.data.user.favorites.map(
         (story) => new Story(story)
       );

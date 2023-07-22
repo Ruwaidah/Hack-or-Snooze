@@ -2,7 +2,7 @@
 
 // This is the global list of the stories, an instance of StoryList
 let storyList;
-
+let showMyStoriesBtns = false
 /** Get and show stories when site first loads. */
 
 async function getAndShowStoriesOnStart() {
@@ -19,19 +19,11 @@ async function getAndShowStoriesOnStart() {
  */
 
 function generateStoryMarkup(story) {
-  const hostName = story.getHostName();
-  let favStory;
   let myStory;
   let showFavStar;
   if (currentUser) {
-    // favStory = currentUser.favorites.find(
-    //   (element) => element.storyId === story.storyId
-    // );
-    favStory = findStory(currentUser.favorites, story.storyId);
-    myStory = findStory(currentUser.ownStories, story.storyId);
-    // myStory = currentUser.ownStories.find(
-    //   (mystory) => story.storyId === mystory.storyId
-    // );
+    let favStory = find(currentUser.favorites, story);
+    myStory = find(currentUser.ownStories, story);
     showFavStar = `<i class="${
       favStory ? "fa-solid" : "fa-regular"
     } star fa-star"></i>`;
@@ -43,14 +35,14 @@ function generateStoryMarkup(story) {
           <a href="${story.url}" target="a_blank" class="story-link">
             ${story.title}
           </a>
-          <small class="story-hostname">(${hostName})</small>
+          <small class="story-hostname">(${story.getHostName()})</small>
         </div>
         <div class="auth-postby-trash">
           <div class="${showFavStar ? "author-username-div" : ""}">
             <small class="story-author">by ${story.author}</small>
             <small class="story-user">posted by ${story.username}</small>
           </div> ${
-            myStory
+            showMyStoriesBtns
               ? '<div class="edit-delete-story-div"><button class="edit-story">Edit</button> <i class="fa-solid fa-trash trash" style="color: #de0d0d;"></i></div>'
               : ""
           } 
@@ -59,8 +51,8 @@ function generateStoryMarkup(story) {
     `);
 }
 
-function findStory(array, storyId) {
-  return array.find((mystory) => storyId === mystory.storyId);
+function find(array, story) {
+  return array.find((mystory) => story.storyId === mystory.storyId);
 }
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
@@ -93,10 +85,10 @@ async function addNewStory(evt) {
     title,
     url,
   };
-  const data = await StoryList.addStory(currentUser.loginToken, story);
+  const data = await StoryList.addStory(story);
 
   if (data) {
-    getAndShowStoriesOnStart()
+    getAndShowStoriesOnStart();
     $newStoryForm.hide();
   }
   $newStoryForm.trigger("reset");
@@ -110,7 +102,6 @@ $("#new-story-cancel").on("click", () => {
 
 /** add remove favorite story */
 async function favUnfavStory(evt) {
-  console.log("click");
   const data = await User.favoritesStory(
     $(evt.target).closest("li").prop("id")
   );
@@ -123,7 +114,6 @@ $allStoriesList.on("click", "i.star", favUnfavStory);
 
 /** delete story */
 async function deleteStory(evt) {
-  console.log("click");
   const storyId = $(evt.target).closest("li").prop("id");
   const deleted = await StoryList.deleteStory(storyId);
   if (deleted) {
@@ -132,7 +122,6 @@ async function deleteStory(evt) {
       (story) => story.storyId !== storyId
     );
     putStoriesOnPage();
-  } else {
   }
 }
 
@@ -169,7 +158,10 @@ async function editMyStoryInfo() {
     title,
     url,
   };
-  const data = await StoryList.editMyStory(localStorage.getItem("token"), editstory);
+  const data = await StoryList.editMyStory(
+    localStorage.getItem("token"),
+    editstory
+  );
 
   if (data) {
     await checkForRememberedUser();
