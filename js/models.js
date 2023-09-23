@@ -1,6 +1,7 @@
 "use strict";
 
-const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
+// const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
+const BASE_URL = "http://localhost:5000/api";
 
 /******************************************************************************
  * Story: a single story in the system
@@ -129,7 +130,6 @@ class User {
       });
 
       let { user } = response.data;
-
       return new User(
         {
           username: user.username,
@@ -141,20 +141,21 @@ class User {
         response.data.token
       );
     } catch (error) {
-      $("#signup-form p").text(error.response.data.error.message);
+      $("#signup-form p").text(error.response.data.message);
     }
   }
 
   /** Login in user with API  */
 
   static async login(username, password) {
+    console.log(username, password);
     try {
       const response = await axios({
         url: `${BASE_URL}/login`,
         method: "POST",
         data: { user: { username, password } },
       });
-
+      console.log(response);
       let { user } = response.data;
 
       return new User(
@@ -168,7 +169,8 @@ class User {
         response.data.token
       );
     } catch (error) {
-      $("#login-form p").text(error.response.data.error.message);
+      console.log(error.response.data.message);
+      $("#login-form p").text(error.response.data.message);
     }
   }
 
@@ -182,6 +184,9 @@ class User {
       const response = await axios({
         url: `${BASE_URL}/users/${username}`,
         method: "GET",
+        headers: {
+          authorization: token,
+        },
         params: { token },
       });
 
@@ -208,6 +213,9 @@ class User {
     await axios({
       url: `${BASE_URL}/users/${currentUser.username}`,
       method: "PATCH",
+      headers: {
+        authorization: token,
+      },
       data: { token, user: data },
     });
   }
