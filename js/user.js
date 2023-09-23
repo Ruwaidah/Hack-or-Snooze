@@ -20,6 +20,7 @@ async function login(evt) {
   // User.login retrieves user info from API and returns User instance
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.login(username, password);
+  console.log(currentUser)
   $loginForm.trigger("reset");
   if (currentUser) {
     saveUserCredentialsInLocalStorage();
@@ -155,6 +156,7 @@ async function checkForRememberedUser() {
  */
 
 function saveUserCredentialsInLocalStorage() {
+  console.log("currentUser",currentUser)
   console.debug("saveUserCredentialsInLocalStorage");
   if (currentUser) {
     localStorage.setItem("token", currentUser.loginToken);
