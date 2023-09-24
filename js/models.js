@@ -46,6 +46,7 @@ class StoryList {
     });
 
     // turn plain old story objects from API into instances of Story class
+    console.log(response)
     const stories = response.data.stories.map((story) => new Story(story));
     // build an instance of our own class using the new array of stories
     return new StoryList(stories);
@@ -57,12 +58,17 @@ class StoryList {
       const { data } = await axios({
         url: `${BASE_URL}/stories`,
         method: "POST",
+        headers: {
+          authorization: currentUser.loginToken,
+        },
         data: { token: currentUser.loginToken, story: newStory },
       });
+      console.log(data)
       currentUser.ownStories.unshift(new Story({ ...data.story }));
       return new Story({ ...data.story });
     } catch (err) {
-      $("#new-story-form .error-msg").text(err.response.data.error.message);
+      console.log(err)
+      $("#new-story-form .error-msg").text(err.response.data.message);
     }
   }
 
@@ -130,6 +136,7 @@ class User {
       });
 
       let { user } = response.data;
+      console.log(user)
       return new User(
         {
           username: user.username,
@@ -141,6 +148,7 @@ class User {
         response.data.token
       );
     } catch (error) {
+      console.log(error.response)
       $("#signup-form p").text(error.response.data.message);
     }
   }
