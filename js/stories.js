@@ -59,7 +59,7 @@ function find(array, story) {
 
 function putStoriesOnPage() {
   console.debug("putStoriesOnPage");
-
+console.log(storyList.stories)
   $allStoriesList.empty();
   // loop through all of our stories and generate HTML for them
   if (storyList.stories.length === 0)
@@ -86,7 +86,7 @@ async function addNewStory(evt) {
     url,
   };
   const data = await StoryList.addStory(story);
-
+console.log(data)
   if (data) {
     getAndShowStoriesOnStart();
     $newStoryForm.hide();
@@ -130,8 +130,11 @@ $allStoriesList.on("click", "i.trash", deleteStory);
 /** edit Story */
 let theStoryValues;
 async function editStory(evt) {
+  console.log(storyList)
   const storyId = $(evt.target).closest("li").prop("id");
-  theStoryValues = storyList.stories.find((story) => story.storyId === storyId);
+  console.log(storyId)
+  theStoryValues = storyList.stories.find((story) => story.storyId === Number(storyId));
+  console.log(theStoryValues)
   $allStoriesList.empty();
   $editStoryForm.show();
   $("#edit-story-title").val(theStoryValues.title);
