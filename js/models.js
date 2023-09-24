@@ -2,6 +2,7 @@
 
 // const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
 const BASE_URL = "http://localhost:5000/api";
+// const BASE_URL = "https://hack-or-snooze-server.onrender.com/api"
 
 /******************************************************************************
  * Story: a single story in the system
@@ -92,11 +93,15 @@ class StoryList {
       const { data } = await axios({
         url: `${BASE_URL}/stories/${story.storyId}`,
         method: "PATCH",
+        headers: {
+          authorization: currentUser.loginToken,
+        },
         data: {
           token,
           story: { author: story.author, title: story.title, url: story.url },
         },
       });
+      console.log(data)
       return data;
     } catch (err) {
       console.log(err.response.data.error.message);
