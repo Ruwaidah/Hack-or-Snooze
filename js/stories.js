@@ -2,7 +2,7 @@
 
 // This is the global list of the stories, an instance of StoryList
 let storyList;
-let showMyStoriesBtns = false
+let showMyStoriesBtns = false;
 /** Get and show stories when site first loads. */
 
 async function getAndShowStoriesOnStart() {
@@ -19,6 +19,7 @@ async function getAndShowStoriesOnStart() {
  */
 
 function generateStoryMarkup(story) {
+  console.log(currentUser.favorites)
   let myStory;
   let showFavStar;
   if (currentUser) {
@@ -59,7 +60,6 @@ function find(array, story) {
 
 function putStoriesOnPage() {
   console.debug("putStoriesOnPage");
-console.log(storyList.stories)
   $allStoriesList.empty();
   // loop through all of our stories and generate HTML for them
   if (storyList.stories.length === 0)
@@ -86,7 +86,6 @@ async function addNewStory(evt) {
     url,
   };
   const data = await StoryList.addStory(story);
-console.log(data)
   if (data) {
     getAndShowStoriesOnStart();
     $newStoryForm.hide();
@@ -119,7 +118,7 @@ async function deleteStory(evt) {
   if (deleted) {
     await checkForRememberedUser();
     storyList.stories = storyList.stories.filter(
-      (story) => story.storyId !== storyId
+      (story) => story.storyId != storyId
     );
     putStoriesOnPage();
   }
@@ -130,11 +129,13 @@ $allStoriesList.on("click", "i.trash", deleteStory);
 /** edit Story */
 let theStoryValues;
 async function editStory(evt) {
-  console.log(storyList)
+  console.log(storyList);
   const storyId = $(evt.target).closest("li").prop("id");
-  console.log(storyId)
-  theStoryValues = storyList.stories.find((story) => story.storyId === Number(storyId));
-  console.log(theStoryValues)
+  console.log(storyId);
+  theStoryValues = storyList.stories.find(
+    (story) => story.storyId === Number(storyId)
+  );
+  console.log(theStoryValues);
   $allStoriesList.empty();
   $editStoryForm.show();
   $("#edit-story-title").val(theStoryValues.title);
