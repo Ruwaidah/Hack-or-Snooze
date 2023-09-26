@@ -47,7 +47,6 @@ class StoryList {
     });
 
     // turn plain old story objects from API into instances of Story class
-    console.log(response)
     const stories = response.data.stories.map((story) => new Story(story));
     // build an instance of our own class using the new array of stories
     return new StoryList(stories);
@@ -64,11 +63,11 @@ class StoryList {
         },
         data: { token: currentUser.loginToken, story: newStory },
       });
-      console.log(data)
+      console.log(data);
       currentUser.ownStories.unshift(new Story({ ...data.story }));
       return new Story({ ...data.story });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       $("#new-story-form .error-msg").text(err.response.data.message);
     }
   }
@@ -79,6 +78,9 @@ class StoryList {
       const response = await axios({
         url: `${BASE_URL}/stories/${storyId}`,
         method: "DELETE",
+        headers: {
+          authorization: currentUser.loginToken,
+        },
         params: { token: currentUser.loginToken },
       });
       return response.data;
@@ -101,7 +103,7 @@ class StoryList {
           story: { author: story.author, title: story.title, url: story.url },
         },
       });
-      console.log(data)
+      console.log(data);
       return data;
     } catch (err) {
       console.log(err.response.data.error.message);
@@ -141,7 +143,6 @@ class User {
       });
 
       let { user } = response.data;
-      console.log(user)
       return new User(
         {
           username: user.username,
@@ -153,7 +154,7 @@ class User {
         response.data.token
       );
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       $("#signup-form p").text(error.response.data.message);
     }
   }
@@ -236,16 +237,21 @@ class User {
   /** favorite unfavorite story */
   static async favoritesStory(storyId) {
     const favStory = currentUser.favorites.find(
-      (element) => element.storyId === storyId
+      (element) => element.storyId == storyId
     );
+    console.log("favStory", favStory)
     const response = await axios({
       url: `${BASE_URL}/users/${currentUser.username}/favorites/${storyId}`,
       method: favStory ? "DELETE" : "POST",
+      headers: {
+        authorization: currentUser.loginToken,
+      },
       params: { token: currentUser.loginToken },
     });
+    console.log(response)
     if (favStory) {
       currentUser.favorites = currentUser.favorites.filter((story) => {
-        if (story.storyId !== storyId) return new Story(story);
+        if (story.storyId != storyId) return new Story(story);
       });
       return false;
     } else {
