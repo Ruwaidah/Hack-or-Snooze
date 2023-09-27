@@ -19,7 +19,6 @@ async function getAndShowStoriesOnStart() {
  */
 
 function generateStoryMarkup(story) {
-  console.log(currentUser.favorites)
   let myStory;
   let showFavStar;
   if (currentUser) {
